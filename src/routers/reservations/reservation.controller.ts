@@ -42,21 +42,29 @@ const createReservation = async (
   try {
     const { userEmail, reservationTime, tableNumber } = req.body;
 
+    
+    const existingReservation: IReservation | null = await Reservation.findOne({
+      $and: [
+        { reservationTime: { $eq: reservationTime } },
+        { tableNumber: { $eq: tableNumber } },
+      ],
+    }); 
+
+    if (existingReservation) {
+      const error: CustomError = new Error(
+        "The table for this time is already booked"
+      );
+      error.statusCode = 409;
+      throw error;
+    }
+
     const newReservation = new Reservation({
       userEmail: userEmail,
       reservationTime: reservationTime,
       tableNumber: tableNumber,
     });
 
-    console.log(newReservation);
-
     const savedReservation = await newReservation.save();
-    // const resultReservation: IReservation[] | null = await Reservation.find({
-    //   $and: [
-    //     { reservationTime: { $gte: reservationQueryStart } },
-    //     { reservationTime: { $lte: reservationQueryEnd } },
-    //   ],
-    // });
 
     res.status(200).json(savedReservation);
   } catch (error) {

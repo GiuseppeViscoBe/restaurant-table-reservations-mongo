@@ -42,19 +42,23 @@ const getReservationsByDateRange = (req, res, next) => __awaiter(void 0, void 0,
 const createReservation = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userEmail, reservationTime, tableNumber } = req.body;
+        const existingReservation = yield reservation_schema_1.default.findOne({
+            $and: [
+                { reservationTime: { $eq: reservationTime } },
+                { tableNumber: { $eq: tableNumber } },
+            ],
+        });
+        if (existingReservation) {
+            const error = new Error("The table for this time is already booked");
+            error.statusCode = 409;
+            throw error;
+        }
         const newReservation = new reservation_schema_1.default({
             userEmail: userEmail,
             reservationTime: reservationTime,
             tableNumber: tableNumber,
         });
-        console.log(newReservation);
         const savedReservation = yield newReservation.save();
-        // const resultReservation: IReservation[] | null = await Reservation.find({
-        //   $and: [
-        //     { reservationTime: { $gte: reservationQueryStart } },
-        //     { reservationTime: { $lte: reservationQueryEnd } },
-        //   ],
-        // });
         res.status(200).json(savedReservation);
     }
     catch (error) {
