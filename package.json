@@ -1,0 +1,30 @@
+{
+  "name": "restaurant-table-reservations-mongo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test-watch": "jest --watch",
+    "build": "concurrently \"rimraf build\"\"npx tsc\"",
+    "prestart": "npm run build",
+    "start": "node build/server.js",
+    "predev": "npm run build",
+    "dev": "concurrently \"npx tsc -w\" \"nodemon build/server.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.0",
+    "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "nodemon": "^3.1.4",
+    "rimraf": "^6.0.1"
+  }
+}
